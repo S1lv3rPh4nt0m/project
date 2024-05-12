@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+header img {
+    width: 100px;
+    height: auto;
+}
+
+main {
+    padding: 20px;
+}
+
+#fichas-estudiantes {
+    margin-bottom: 20px;
+}
+
+.ciudad {
+    margin-bottom: 20px;
+}
+
+.ciudad h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.ficha-estudiante {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.ficha-estudiante-item {
+    flex: 1 0 25%; /* Para que haya 4 fichas por fila en pantallas grandes */
+    padding: 10px;
+    text-align: center;
+}
+
+.ficha-estudiante-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
