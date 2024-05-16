@@ -1,5 +1,6 @@
 <?php
-// Conexión a la base de datos SQL Server
+header('Content-Type: application/json');
+
 $serverName = "tu_servidor";
 $connectionOptions = array(
     "Database" => "tu_base_de_datos",
@@ -9,28 +10,39 @@ $connectionOptions = array(
 $conn = sqlsrv_connect($serverName, $connectionOptions);
 
 if ($conn === false) {
-    die(print_r(sqlsrv_errors(), true));
+    die(json_encode(array("error" => sqlsrv_errors())));
 }
 
-// Manejar la solicitud POST para actualizar la asistencia
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Obtener el ID del estudiante y el estado de la asistencia del cuerpo de la solicitud
-    $estudianteID = $_POST['estudianteID'];
-    $asistencia = $_POST['asistencia'];
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    // Obtener los estudiantes
+    $query = "SELECT * FROM Estudiantes";
+    $stmt = sqlsrv_query($conn, $query);
 
-    // Actualizar la base de datos SQL Server
+    if ($stmt === false) {
+        die(json_encode(array("error" => sqlsrv_errors())));
+    }
+
+    $estudiantes = array();
+    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+        $estudiantes[] = $row;
+    }
+
+    echo json_encode($estudiantes);
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Actualizar la asistencia
+    $input = json_decode(file_get_contents('php://input'), true);
+    $estudianteID = $input['estudianteID'];
+    $asistencia = $input['asistencia'];
+
     $query = "UPDATE Estudiantes SET Asistencia = ? WHERE EstudianteID = ?";
     $params = array($asistencia, $estudianteID);
     $stmt = sqlsrv_query($conn, $query, $params);
 
     if ($stmt === false) {
-        die(print_r(sqlsrv_errors(), true));
+        die(json_encode(array("error" => sqlsrv_errors())));
     }
 
-    // Enviar una respuesta JSON al cliente
-    header('Content-Type: application/json');
     echo json_encode(array("message" => "Asistencia actualizada"));
 }
 
-// Cerrar la conexión a la base de datos
 sqlsrv_close($conn);
